@@ -79,16 +79,18 @@ namespace Excel
         {
             if(zhuanhuan==1)
             {
+                dataGridView.DataSource = null;
                 dataGridView.DataSource = ExcelHelp.LoadDataFromExcel(Openlujing).Tables[0];
             }
 
-            if (ExcelHelp.updateExcel(dataGridView) != null)
-            {
-                //更新状态为数据转换中
-                lblState.Text = "状态：数据转换中";
+            //更新状态为数据转换中
+            lblState.Text = "状态：数据转换中";
+            //数据转换
+            dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
 
-                //数据转换
-                dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
+            if (dataGridView.DataSource != null)
+            {
+                
 
                 //更新状态
                 lblState.Text = "状态：数据转换完成，待导出";
@@ -98,6 +100,7 @@ namespace Excel
                 lblSave.Text = lblSave.Text.ToString() + lujing;
                 //更新状态
                 lblState.Text = "状态：导出中，数据量较大，请稍后";
+                MessageBox.Show("因数据量较大，所以导出时间可能较长，请耐心等待");
                 ExcelHelp.SaveDataTableToExcel((System.Data.DataTable)this.dataGridView.DataSource, lujing);
                 //更新状态
                 lblState.Text = "状态：数据导出完成";
@@ -119,17 +122,19 @@ namespace Excel
             {
                 zhuanhuan = 1;
 
-                if (ExcelHelp.updateExcel(dataGridView) != null)
+                lblState.Text = "状态：数据转换中";
+                //数据转换
+                dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
+
+                if (dataGridView.DataSource != null)
                 {
-                    lblState.Text = "状态：数据转换中";
-                    //数据转换
-                    dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
                     //更新状态
                     lblState.Text = "状态：数据转换完成";
+                    MessageBox.Show("数据转换完成");
                 }
                 else
                 {
-                    MessageBox.Show("转换失败");
+                    MessageBox.Show("数据转换失败");
                 }
             }
             else

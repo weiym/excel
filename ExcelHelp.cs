@@ -41,10 +41,6 @@ namespace Excel
         /// <returns>返回一个dataTable</returns>
         public static System.Data.DataTable updateExcel(DataGridView dataGridView)
         {
-
-            int i = 0;
-            int j = 0;
-            int k = 0;
             //计数器，用于在某些时候记录当前已写入的dataGridView的行数
             int counter = 0;
             //可提交路径
@@ -133,12 +129,12 @@ namespace Excel
                         if (dataGridView.Rows[a].Cells[5].Value.ToString().Substring(dataGridView.Rows[a].Cells[5].Value.ToString().Length - 1, 1).Equals(";"))//如果是分号
                         {
                             dataGridView.Rows[a].Cells[5].Value = dataGridView.Rows[a].Cells[5].Value.ToString() + dataGridView.Rows[a].Cells[6].Value.ToString();
-                            MessageBox.Show("不加分号的第"+a+dataGridView.Rows[a].Cells[5].Value.ToString());
+                            //MessageBox.Show("不加分号的第"+a+dataGridView.Rows[a].Cells[5].Value.ToString());
                         }
                         else//如果不是分号，拼接上分号
                         {
                             dataGridView.Rows[a].Cells[5].Value = dataGridView.Rows[a].Cells[5].Value.ToString() + ";" + dataGridView.Rows[a].Cells[6].Value.ToString();
-                            MessageBox.Show("加分号的第" + a + dataGridView.Rows[a].Cells[5].Value.ToString());
+                            //MessageBox.Show("加分号的第" + a + dataGridView.Rows[a].Cells[5].Value.ToString());
                         }
                     }
                 }
