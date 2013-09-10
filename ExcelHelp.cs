@@ -44,15 +44,12 @@ namespace Excel
             int i = 0;
             int j = 0;
             int k = 0;
-            //String before = null;
-            //String after = null;
             //计数器，用于在某些时候记录当前已写入的dataGridView的行数
             int counter = 0;
             //可提交路径
             String lujing = null;
             //用于拆分可提交路径
             String[] lujingshuzu = new String[] { };
-
 
 
             //定义一个dataTable
@@ -71,6 +68,11 @@ namespace Excel
             DataColumn dc5 = new DataColumn("环节名称");
             //定义一个dataTable第六列为【可提交路径】
             DataColumn dc6 = new DataColumn("可提交路径");
+            //定义一个dataTable第七列为【审批意见是否必填】
+            DataColumn dc7 = new DataColumn("审批意见是否必填");
+            //定义一个dataTable第八列为【备注】
+            DataColumn dc8 = new DataColumn("备注");
+
 
             //将定义的列放到datatable中
             dt.Columns.Add(dc1);
@@ -79,6 +81,8 @@ namespace Excel
             dt.Columns.Add(dc4);
             dt.Columns.Add(dc5);
             dt.Columns.Add(dc6);
+            dt.Columns.Add(dc7);
+            dt.Columns.Add(dc8);
 
 
             try
@@ -86,14 +90,14 @@ namespace Excel
 
                 #region  此段代码作用是将可提交路径根据【；】进行分割换行
 
-                //二维数组，用于将可提交路径换行，数组的行数动态生成，列数固定为6
-                String[,] array = new String[dataGridView.Rows.Count, 6];
+                //二维数组，用于将可提交路径换行，数组的行数动态生成，列数固定为8
+                String[,] array = new String[dataGridView.Rows.Count, 8];
 
                 //循环将dataGridView的数值赋到二维数组中
                 for (int a = 0; a < dataGridView.Rows.Count; a++)
                 {
 
-                    for (int b = 0; b < 6; b++)
+                    for (int b = 0; b < 8; b++)
                     {
                         lujing = dataGridView.Rows[a].Cells[b].Value.ToString();
 
