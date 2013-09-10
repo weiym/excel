@@ -16,6 +16,10 @@ namespace Excel
         private String workflowStepPath;//可提交路径
         private String workflowOPinion;//审批意见是否必填
         private String workflowSwitches;//开关编码
+        private String workflowNote;//备注
+
+        
+
         #endregion
 
 
@@ -91,6 +95,14 @@ namespace Excel
         {
             get { return workflowSwitches; }
             set { workflowSwitches = value; }
+        }
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public String WorkflowNote
+        {
+            get { return workflowNote; }
+            set { workflowNote = value; }
         }
 
         #endregion

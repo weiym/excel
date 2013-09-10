@@ -20,6 +20,7 @@ namespace Excel
 
         public static DateTime beforeTime;			//Excel启动之前时间
         public static DateTime afterTime;				//Excel启动之后时间
+        
 
         public static void cs()
         {
@@ -90,8 +91,6 @@ namespace Excel
 
                 #region  此段代码作用是将可提交路径根据【；】进行分割换行
 
-                //二维数组，用于将可提交路径换行，数组的行数动态生成，列数固定为8
-                String[,] array = new String[dataGridView.Rows.Count, 8];
 
                 //循环将dataGridView的数值赋到二维数组中
                 for (int a = 0; a < dataGridView.Rows.Count; a++)
@@ -116,12 +115,33 @@ namespace Excel
 
 
                         //将删除过部分特殊字符的dataGridView的数据动态赋给 二维数组
-                        array[a, b] = lujing;
+                        dataGridView.Rows[a].Cells[b].Value = lujing;
                     }
                 }
 
-                //临时测试，展示dataGridView的下标为2的行，第三列的数据
-                //MessageBox.Show(array[2,3]);
+                //对进一步处理的数据进行处理
+                for (int a = 0; a < dataGridView.Rows.Count; a++)
+                {
+                    //判断进一步处理是否为空
+                    if (dataGridView.Rows[a].Cells[6].Value.ToString().Equals("") || dataGridView.Rows[a].Cells[6].Value.ToString() == null)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        //判断路径的最后一位是否为分号
+                        if (dataGridView.Rows[a].Cells[5].Value.ToString().Substring(dataGridView.Rows[a].Cells[5].Value.ToString().Length - 1, 1).Equals(";"))//如果是分号
+                        {
+                            dataGridView.Rows[a].Cells[5].Value = dataGridView.Rows[a].Cells[5].Value.ToString() + dataGridView.Rows[a].Cells[6].Value.ToString();
+                            MessageBox.Show("不加分号的第"+a+dataGridView.Rows[a].Cells[5].Value.ToString());
+                        }
+                        else//如果不是分号，拼接上分号
+                        {
+                            dataGridView.Rows[a].Cells[5].Value = dataGridView.Rows[a].Cells[5].Value.ToString() + ";" + dataGridView.Rows[a].Cells[6].Value.ToString();
+                            MessageBox.Show("加分号的第" + a + dataGridView.Rows[a].Cells[5].Value.ToString());
+                        }
+                    }
+                }
 
 
                 //定义一个集合
@@ -135,7 +155,7 @@ namespace Excel
                     return null;
                 }
 
-                //根据数组的长度定义循环的次数
+                //根据数组的长度(也就是流程的个数)定义循环的次数
                 for (int g = 0; g < counters.Count; g++)
                 {
                     //因为第一次和后续几次的取下标的逻辑不同，所以需要分开判断   
@@ -148,45 +168,42 @@ namespace Excel
                             //循环将路径那一列并进行拆分
                             for (int c = 0; c < Int32.Parse(counters[0])+1; c++)
                             {
-                                //MessageBox.Show(array[c,3]);
 
                                 /**
                                  * 将路径的那一列，根据“；”进行拆分,    StringSplitOptions.RemoveEmptyEntries的作用为去除空值
                                  * 因为999和并签的部分环节对应的可提交路径为空，所以此处会把999和并签的部分环节给去掉,
                                  * */
-                                lujingshuzu = array[c, 5].Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-                                //将路径的那一列，根据“；”进行拆分。   因为999的可提交路径为空，所以不能在此去除空值，否则会导致999无法被写入，无法被转换
-                                //lujingshuzu = array[c, 3].Split(new char[] { ';' });
-
-
-
+                                lujingshuzu = dataGridView.Rows[c].Cells[5].Value.ToString().Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
                                 #region  此段代码作用是二维数组的数据做一定处理后，赋给datatable
 
                                 /**
                                  * 根据数据内有没有值，也就是数组的长度不同，有不同的逻辑控制
                                  **/
-
-
                                 //如果数组内没有值，也就是数组的长度为0
                                 if (lujingshuzu.Length == 0)
                                 {
-                                    //定义一个dataTable的行
-                                    DataRow dr = dt.NewRow();
-                                    //为dataTable增加一行
-                                    dt.Rows.Add(dr);
 
-                                    //给datatable的第counter行的6列赋值
-                                    dt.Rows[counter][0] = counter + 1;//序号
-                                    dt.Rows[counter][1] = array[c, 1];//流程标识
-                                    dt.Rows[counter][2] = array[c, 2];//流程名称
-                                    dt.Rows[counter][3] = array[c, 3];//环节ID
-                                    dt.Rows[counter][4] = array[c, 4];//环节名称
-                                    dt.Rows[counter][5] = "";//可提交路径
+                                    ExcelModels excelModels = new ExcelModels();
+                                    excelModels.Id = (counter + 1).ToString();//序号
+                                    excelModels.WorkflowId = dataGridView.Rows[c].Cells[1].Value.ToString();//流程标识
+                                    excelModels.WorkflowName = dataGridView.Rows[c].Cells[2].Value.ToString();//流程名称
+                                    excelModels.WorkflowStepId = dataGridView.Rows[c].Cells[3].Value.ToString();//环节ID
+                                    excelModels.WorkflowStepName = dataGridView.Rows[c].Cells[4].Value.ToString();//环节名称
+                                    excelModels.WorkflowStepPath = "";//可提交路径
+                                    excelModels.WorkflowSwitches = dataGridView.Rows[c].Cells[8].Value.ToString();//开关编码
+                                    //审批意见是否必填
+                                    if(dataGridView.Rows[c].Cells[7].Value.ToString().Equals("1"))
+                                    {
+                                        excelModels.WorkflowOPinion = "是";
+                                    }
+                                    else
+                                    {
+                                        excelModels.WorkflowOPinion = "否";
+                                    }
 
-
-
+                                    //向datatable增加一行
+                                    addDataRow(dt, excelModels, counter);
                                     //计数器加上数组的长度，用于从第N行重新开始赋值
                                     counter = counter + 1;
 
@@ -196,25 +213,9 @@ namespace Excel
                                     //循环将数组的值赋给datatable
                                     for (int d = 0; d < lujingshuzu.Length; d++)
                                     {
-                                        //定义一个dataTable的行
-                                        DataRow dr = dt.NewRow();
-                                        //为dataTable增加一行
-                                        dt.Rows.Add(dr);
-
-
-                                        //dataGridView.Rows.Add();
-                                        //定义一个临时计数器
+                                        
                                         int counterls = counter + d;
-                                        //临时测试，展示C的值
-                                        //MessageBox.Show("C的值为" + c );
-
-
-                                        //临时测试，展示lujingshuzu的值
-                                        //for (int e = 0; e < lujingshuzu.Length;e++ )
-                                        //{
-                                        //    MessageBox.Show(lujingshuzu[e]);
-                                        //}
-
+                                      
 
                                         //因为第一次的逻辑和之后的不一样，所以在此判断是否是第一次，主要是序号的逻辑不通
                                         if (c == 0)
@@ -222,20 +223,25 @@ namespace Excel
                                             //判断根据；拆分后的值是否为空，不为空则赋值，如果为空则跳出循环
                                             if (lujingshuzu[d] != null && lujingshuzu[d] != "")
                                             {
-                                                //dataGridView.Rows[d].Cells[1].Value = array[c, 1];
-                                                //dataGridView.Rows[d].Cells[2].Value = array[c, 2];   
-                                                //dataGridView.Rows[d].Cells[3].Value = lujingshuzu[d];
-
-                                                ////给datatable的第N行的6列赋值
-                                                dt.Rows[counterls][0] = d + 1;//序号
-                                                dt.Rows[counterls][1] = array[c, 1];//流程标识
-                                                dt.Rows[counterls][2] = array[c, 2];//流程名称
-                                                dt.Rows[counterls][3] = array[c, 3];//环节ID
-                                                dt.Rows[counterls][4] = array[c, 4];//环节名称
-                                                dt.Rows[counterls][5] = lujingshuzu[d];//可提交路径
-
-                                                //临时测试，展示拆分后的数据
-                                                //MessageBox.Show("第C" + c + "次的数据为：" + dataGridView.Rows[d].Cells[3].Value.ToString());
+                                                ExcelModels excelModels = new ExcelModels();
+                                                excelModels.Id = (d + 1).ToString();//序号
+                                                excelModels.WorkflowId = dataGridView.Rows[c].Cells[1].Value.ToString();//流程标识
+                                                excelModels.WorkflowName = dataGridView.Rows[c].Cells[2].Value.ToString();//流程名称
+                                                excelModels.WorkflowStepId = dataGridView.Rows[c].Cells[3].Value.ToString();//环节ID
+                                                excelModels.WorkflowStepName = dataGridView.Rows[c].Cells[4].Value.ToString();//环节名称
+                                                excelModels.WorkflowStepPath = updatePath(0, Int32.Parse(counters[0]), lujingshuzu[d], dataGridView);//可提交路径
+                                                excelModels.WorkflowSwitches = dataGridView.Rows[c].Cells[8].Value.ToString();//开关编码
+                                                //审批意见是否必填
+                                                if (dataGridView.Rows[c].Cells[7].Value.ToString().Equals("1"))
+                                                {
+                                                    excelModels.WorkflowOPinion = "是";
+                                                }
+                                                else
+                                                {
+                                                    excelModels.WorkflowOPinion = "否";
+                                                }
+                                                //想datatable增加一行
+                                                addDataRow(dt, excelModels, counterls);
                                             }
                                             else
                                             {
@@ -248,19 +254,25 @@ namespace Excel
                                             if (lujingshuzu[d] != null && lujingshuzu[d] != "")
                                             {
 
-                                                //dataGridView.Rows[counterls].Cells[1].Value = array[c, 1];
-                                                //dataGridView.Rows[counterls].Cells[2].Value = array[c, 2];
-                                                //dataGridView.Rows[counterls].Cells[3].Value = lujingshuzu[d];
-
-                                                ////给datatable的第N行的6列赋值
-                                                dt.Rows[counterls][0] = counterls + 1;//序号
-                                                dt.Rows[counterls][1] = array[c, 1];//流程标识
-                                                dt.Rows[counterls][2] = array[c, 2];//流程名称
-                                                dt.Rows[counterls][3] = array[c, 3];//环节ID
-                                                dt.Rows[counterls][4] = array[c, 4];//环节名称
-                                                dt.Rows[counterls][5] = lujingshuzu[d];//可提交路径
-                                                //临时测试，展示拆分后的数据
-                                                //MessageBox.Show("第counterls" + c + "次的数据为：" + dataGridView.Rows[counterls].Cells[3].Value.ToString());
+                                                ExcelModels excelModels = new ExcelModels();
+                                                excelModels.Id = (counterls + 1).ToString();//序号
+                                                excelModels.WorkflowId = dataGridView.Rows[c].Cells[1].Value.ToString();//流程标识
+                                                excelModels.WorkflowName = dataGridView.Rows[c].Cells[2].Value.ToString();//流程名称
+                                                excelModels.WorkflowStepId = dataGridView.Rows[c].Cells[3].Value.ToString();//环节ID
+                                                excelModels.WorkflowStepName = dataGridView.Rows[c].Cells[4].Value.ToString();//环节名称
+                                                excelModels.WorkflowStepPath = updatePath(0, Int32.Parse(counters[0]), lujingshuzu[d], dataGridView);//可提交路径
+                                                excelModels.WorkflowSwitches = dataGridView.Rows[c].Cells[8].Value.ToString();//开关编码
+                                                //审批意见是否必填
+                                                if (dataGridView.Rows[c].Cells[7].Value.ToString().Equals("1"))
+                                                {
+                                                    excelModels.WorkflowOPinion = "是";
+                                                }
+                                                else
+                                                {
+                                                    excelModels.WorkflowOPinion = "否";
+                                                }
+                                                //想datatable增加一行
+                                                addDataRow(dt, excelModels, counterls);
                                             }
                                             else
                                             {
@@ -293,12 +305,7 @@ namespace Excel
                              * 将路径的那一列，根据“；”进行拆分,    StringSplitOptions.RemoveEmptyEntries的作用为去除空值
                              * 因为999和并签的部分环节对应的可提交路径为空，所以此处会把999和并签的部分环节给去掉,
                              * */
-                            lujingshuzu = array[Int32.Parse(counters[g - 1])+1+c, 5].Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-                            //将路径的那一列，根据“；”进行拆分。   因为999的可提交路径为空，所以不能在此去除空值，否则会导致999无法被写入，无法被转换
-                            //lujingshuzu = array[c, 3].Split(new char[] { ';' });
-
-
+                            lujingshuzu = dataGridView.Rows[Int32.Parse(counters[g - 1]) + 1 + c].Cells[5].Value.ToString().Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
 
                             #region  此段代码作用是二维数组的数据做一定处理后，赋给datatable
@@ -311,18 +318,28 @@ namespace Excel
                             //如果数组内没有值，也就是数组的长度为0
                             if (lujingshuzu.Length == 0)
                             {
-                                //定义一个dataTable的行
-                                DataRow dr = dt.NewRow();
-                                //为dataTable增加一行
-                                dt.Rows.Add(dr);
 
-                                //给datatable的第counter行的6列赋值
-                                dt.Rows[counter][0] = counter + 1;//序号
-                                dt.Rows[counter][1] = array[Int32.Parse(counters[g - 1]) + c + 1, 1];//流程标识
-                                dt.Rows[counter][2] = array[Int32.Parse(counters[g - 1]) + c + 1, 2];//流程名称
-                                dt.Rows[counter][3] = array[Int32.Parse(counters[g - 1]) + c + 1, 3];//环节ID
-                                dt.Rows[counter][4] = array[Int32.Parse(counters[g - 1]) + c + 1, 4];//环节名称
-                                dt.Rows[counter][5] = "";//可提交路径
+                                ExcelModels excelModels = new ExcelModels();
+                                excelModels.Id = (counter + 1).ToString();//序号
+                                excelModels.WorkflowId = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[1].Value.ToString();//流程标识
+                                excelModels.WorkflowName = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[2].Value.ToString();//流程名称
+                                excelModels.WorkflowStepId = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[3].Value.ToString();//环节ID
+                                excelModels.WorkflowStepName = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[4].Value.ToString();//环节名称
+                                excelModels.WorkflowStepPath = "";//可提交路径
+                                excelModels.WorkflowSwitches = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[8].Value.ToString(); ;//开关编码
+                                //审批意见是否必填
+                                if (dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[7].Value.ToString().Equals("1"))
+                                {
+                                    excelModels.WorkflowOPinion = "是";
+                                }
+                                else
+                                {
+                                    excelModels.WorkflowOPinion = "否";
+                                }
+
+                                //向datatable增加一行
+                                addDataRow(dt, excelModels, counter);
+
 
                                 //计数器加上数组的长度，用于从第N行重新开始赋值
                                 counter = counter + 1;
@@ -333,53 +350,38 @@ namespace Excel
                                 //循环将数组的值赋给datatable
                                 for (int d = 0; d < lujingshuzu.Length; d++)
                                 {
-                                    //定义一个dataTable的行
-                                    DataRow dr = dt.NewRow();
-                                    //为dataTable增加一行
-                                    dt.Rows.Add(dr);
-
-
-                                    //dataGridView.Rows.Add();
+                                  
                                     //定义一个临时计数器
                                     int counterls = counter + d;
-                                    //临时测试，展示C的值
-                                    //MessageBox.Show("C的值为" + c );
-
-
-                                    //临时测试，展示lujingshuzu的值
-                                    //for (int e = 0; e < lujingshuzu.Length;e++ )
-                                    //{
-                                    //    MessageBox.Show(lujingshuzu[e]);
-                                    //}
-
-
-
+                                   
                                     //判断根据；拆分后的值是否为空，不为空则赋值，如果为空则跳出循环
                                     if (lujingshuzu[d] != null && lujingshuzu[d] != "")
                                     {
-                                        //dataGridView.Rows[d].Cells[1].Value = array[c, 1];
-                                        //dataGridView.Rows[d].Cells[2].Value = array[c, 2];   
-                                        //dataGridView.Rows[d].Cells[3].Value = lujingshuzu[d];
 
-                                        ////给datatable的第N行的6列赋值
-                                        dt.Rows[counterls][0] = counterls + 1;//序号
-                                        dt.Rows[counterls][1] = array[Int32.Parse(counters[g-1])+c+1, 1];//流程标识
-                                        dt.Rows[counterls][2] = array[Int32.Parse(counters[g - 1]) + c + 1, 2];//流程名称
-                                        dt.Rows[counterls][3] = array[Int32.Parse(counters[g - 1]) + c + 1, 3];//环节ID
-                                        dt.Rows[counterls][4] = array[Int32.Parse(counters[g - 1]) + c + 1, 4];//环节名称
-                                        dt.Rows[counterls][5] = lujingshuzu[d];//可提交路径
-
-                                        //临时测试，展示拆分后的数据
-                                        //MessageBox.Show("第C" + c + "次的数据为：" + dataGridView.Rows[d].Cells[3].Value.ToString());
+                                        ExcelModels excelModels = new ExcelModels();
+                                        excelModels.Id = (counter + 1).ToString();//序号
+                                        excelModels.WorkflowId = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[1].Value.ToString();//流程标识
+                                        excelModels.WorkflowName = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[2].Value.ToString();//流程名称
+                                        excelModels.WorkflowStepId = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[3].Value.ToString();//环节ID
+                                        excelModels.WorkflowStepName = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[4].Value.ToString();//环节名称
+                                        excelModels.WorkflowStepPath = updatePath(Int32.Parse(counters[g - 1]) + 1, Int32.Parse(counters[g]), lujingshuzu[d], dataGridView);//可提交路径
+                                        excelModels.WorkflowSwitches = dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[8].Value.ToString(); ;//开关编码
+                                        //审批意见是否必填
+                                        if (dataGridView.Rows[Int32.Parse(counters[g - 1]) + c + 1].Cells[7].Value.ToString().Equals("1"))
+                                        {
+                                            excelModels.WorkflowOPinion = "是";
+                                        }
+                                        else
+                                        {
+                                            excelModels.WorkflowOPinion = "否";
+                                        }
+                                        //向datatable增加一行
+                                        addDataRow(dt, excelModels, counterls);
                                     }
                                     else
                                     {
                                         continue;
                                     }
-
-
-                                    //临时测试，展示拆分后的数据
-                                    //MessageBox.Show("第"+c+"次的数据为："+dataGridView.Rows[d].Cells[3].Value.ToString());
                                 }
                                 //计数器加上数组的长度，用于从第N列重新开始赋值
                                 counter = counter + lujingshuzu.Length;
@@ -389,9 +391,6 @@ namespace Excel
                         }
                         #endregion
                     }
-
-
-
                 }
                 #endregion
 
@@ -472,63 +471,57 @@ namespace Excel
                 #endregion
 
 
-                //return dt;
 
-
-                #region  此段代码支持并签的数据,用的是datatable，作用是将【00X】替换为文字说明
+                #region  已废止 此段代码支持并签的数据,用的是datatable，作用是将【00X】替换为文字说明
 
 
 
-                //循环获取所有的可提交路径
-                for (i = 0; i < dt.Rows.Count; i++)
-                {
+                ////循环获取所有的可提交路径
+                //for (i = 0; i < dt.Rows.Count; i++)
+                //{
 
-                    //获取可提交路径，并将值赋给一个String字段，因为可提交路径为第6列，也就是下标为5的那一列
-                    lujing = dt.Rows[i][5].ToString();
+                //    //获取可提交路径，并将值赋给一个String字段，因为可提交路径为第6列，也就是下标为5的那一列
+                //    lujing = dt.Rows[i][5].ToString();
 
-                    //将左半边大括号替换为 右半边的大括号，以便进行数据拆分
-                    lujing = lujing.Replace("{", "}");
+                //    //将左半边大括号替换为 右半边的大括号，以便进行数据拆分
+                //    lujing = lujing.Replace("{", "}");
 
-                    //string[] s = str.Split(new char[] { '#' });参考代码
-                    //将路径根据右版本的大括号拆分成一个数据，用于数据比对
-                    lujingshuzu = lujing.Split(new char[] { '}' });
+                //    //string[] s = str.Split(new char[] { '#' });参考代码
+                //    //将路径根据右版本的大括号拆分成一个数据，用于数据比对
+                //    lujingshuzu = lujing.Split(new char[] { '}' });
 
-                    //因为会出现重复数据，不知道怎么处理的关系，所以在此将lujing的值 置空
-                    lujing = null;
+                //    //因为会出现重复数据，不知道怎么处理的关系，所以在此将lujing的值 置空
+                //    lujing = null;
 
-                    //以下代码的作用为将可提交路径内的00几替换为文字
+                //    //以下代码的作用为将可提交路径内的00几替换为文字
+                //    //根据数组的长度循环
+                //    for (k = 0; k < lujingshuzu.Length; k++)
+                //    {
+                //        //根据导入excel的行数循环
+                //        for (j = 0; j < dt.Rows.Count; j++)
+                //        {
+                //            //循环判断数组内的00几和可提交路径列的00及是否匹配，如果匹配则替换为文字说明
+                //            if (lujingshuzu[k].Equals(dt.Rows[j][3].ToString()))
+                //            {
+                //                lujingshuzu[k] = dt.Rows[j][4].ToString();
+                //            }
 
-                    //临时测试，展示拆分后的数据
-                    //MessageBox.Show("datatable的行数为：" + dt.Rows.Count.ToString());
+                //        }
 
-                    //根据数组的长度循环
-                    for (k = 0; k < lujingshuzu.Length; k++)
-                    {
-                        //根据导入excel的行数循环
-                        for (j = 0; j < dt.Rows.Count; j++)
-                        {
-                            //循环判断数组内的00几和可提交路径列的00及是否匹配，如果匹配则替换为文字说明
-                            if (lujingshuzu[k].Equals(dt.Rows[j][3].ToString()))
-                            {
-                                lujingshuzu[k] = dt.Rows[j][4].ToString();
-                            }
+                //        lujing = lujing + lujingshuzu[k];
+                //    }
+                //    //删除#A#
+                //    //lujing = lujing.Replace("#A#", "");
+                //    //删除#N#
+                //    //lujing = lujing.Replace("#N#", "");
+                //    //删除#T#
+                //    //lujing = lujing.Replace("#T#", "");
+                //    //删除WORKFLOWSECRSELE
+                //    //lujing = lujing.Replace("WORKFLOWSECRSELE", "");
 
-                        }
-
-                        lujing = lujing + lujingshuzu[k];
-                    }
-                    //删除#A#
-                    //lujing = lujing.Replace("#A#", "");
-                    //删除#N#
-                    //lujing = lujing.Replace("#N#", "");
-                    //删除#T#
-                    //lujing = lujing.Replace("#T#", "");
-                    //删除WORKFLOWSECRSELE
-                    //lujing = lujing.Replace("WORKFLOWSECRSELE", "");
-
-                    //将修改过的可提交路径重新写入到dataTable中
-                    dt.Rows[i][5] = lujing;
-                }
+                //    //将修改过的可提交路径重新写入到dataTable中
+                //    dt.Rows[i][5] = lujing;
+                //}
                 #endregion
 
                 //返回一个datatable
@@ -778,7 +771,7 @@ namespace Excel
                             //MessageBox.Show("第" + counterOns  + "行的值为：" + excelTable.Rows[counterOns][4].ToString());
                             //MessageBox.Show("第" + conterTwo  + "行的值为：" + excelTable.Rows[conterTwo][4].ToString());
 
-                            //判断“环节名称”y以及“环节ID”是否相同
+                            //判断“环节名称”以及“环节ID”是否相同
                             if (excelTable.Rows[counterOns][4].ToString().Equals(excelTable.Rows[conterTwo][4].ToString())
                                 && excelTable.Rows[counterOns][3].ToString().Equals(excelTable.Rows[conterTwo][3].ToString()))
                             {
@@ -833,6 +826,8 @@ namespace Excel
                             wSheet.Cells[1, 4] = "环节ID";
                             wSheet.Cells[1, 5] = "环节名称";
                             wSheet.Cells[1, 6] = "可提交路径";
+                            wSheet.Cells[1, 7] = "审批意见是否必填";
+                            wSheet.Cells[1, 8] = "备注";
 
                             #endregion
 
@@ -890,10 +885,12 @@ namespace Excel
                                     //将值写入到excel中，从第二行，第一列开始写入，excel开始为1而不是0，datatable有区别
                                     wSheet.Cells[i + 2, 1] = "'" + excelTable.Rows[i][0].ToString();//序号，前面加【'】是为了强转为文本格式
                                     wSheet.Cells[i + 2, 2] = "'" + excelTable.Rows[i][1].ToString();//流程ID，前面加【'】是为了强转为文本格式
-                                    wSheet.Cells[i + 2, 3] = excelTable.Rows[i][2].ToString();
+                                    wSheet.Cells[i + 2, 3] = "'" + excelTable.Rows[i][2].ToString();//流程名称
                                     wSheet.Cells[i + 2, 4] = "'" + excelTable.Rows[i][3].ToString();//环节ID，前面加【'】是为了强转为文本格式
-                                    wSheet.Cells[i + 2, 5] = excelTable.Rows[i][4].ToString();
-                                    wSheet.Cells[i + 2, 6] = excelTable.Rows[i][5].ToString();
+                                    wSheet.Cells[i + 2, 5] = "'" + excelTable.Rows[i][4].ToString();//环节名称
+                                    wSheet.Cells[i + 2, 6] = "'" + excelTable.Rows[i][5].ToString();//可提交路径
+                                    wSheet.Cells[i + 2, 7] = "'" + excelTable.Rows[i][6].ToString();//审批意见是否必填
+                                    wSheet.Cells[i + 2, 8] = "'" + excelTable.Rows[i][7].ToString();//备注
 
                                 }
                             }
@@ -992,6 +989,8 @@ namespace Excel
                             wSheet.Cells[1, 4] = "环节ID";
                             wSheet.Cells[1, 5] = "环节名称";
                             wSheet.Cells[1, 6] = "可提交路径";
+                            wSheet.Cells[1, 7] = "审批意见是否必填";
+                            wSheet.Cells[1, 8] = "备注";
 
                             #endregion
 
@@ -1049,10 +1048,12 @@ namespace Excel
                                     //将值写入到excel中，从第二行，第一列开始写入，excel开始为1而不是0，datatable有区别
                                     wSheet.Cells[i + 2, 1] = "'" + (i+1).ToString();//序号，前面加【'】是为了强转为文本格式
                                     wSheet.Cells[i + 2, 2] = "'" + excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][1].ToString();//流程ID，前面加【'】是为了强转为文本格式
-                                    wSheet.Cells[i + 2, 3] = excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][2].ToString();
+                                    wSheet.Cells[i + 2, 3] = "'" + excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][2].ToString();//流程名称
                                     wSheet.Cells[i + 2, 4] = "'" + excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][3].ToString();//环节ID，前面加【'】是为了强转为文本格式
-                                    wSheet.Cells[i + 2, 5] = excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][4].ToString();
-                                    wSheet.Cells[i + 2, 6] = excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][5].ToString();
+                                    wSheet.Cells[i + 2, 5] = "'" + excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][4].ToString();//环节名称
+                                    wSheet.Cells[i + 2, 6] = "'" + excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][5].ToString();//可提交路径
+                                    wSheet.Cells[i + 2, 7] = "'" + excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][6].ToString();//审批意见是否必填
+                                    wSheet.Cells[i + 2, 8] = "'" + excelTable.Rows[Int32.Parse(counters[j - 1]) + 1 + i][7].ToString();//备注
 
                                 }
                             }
@@ -1259,7 +1260,7 @@ namespace Excel
 
 
         /// <summary>
-        /// 判断有多少个流程
+        /// 判断有多少个流程,将每个流程起始位置的下标存入数组
         /// </summary>
         /// <param name="excelTable">输入参数为DataGridView</param>
         /// <returns>返回一个List<String></returns>
@@ -1429,60 +1430,79 @@ namespace Excel
 
 
 
-        #region 废掉的 没有通用性
-        ///// <summary>
-        ///// 合并单元格
-        ///// </summary>
-        ///// <param name="j">数组的位置</param>
-        ///// <param name="counterOns"></param>
-        ///// <param name="conterTwo"></param>
-        ///// <param name="counters"></param>
-        ///// <param name="excelTable"></param>
-        ///// <param name="wSheet"></param>
-        //private static void merge(int j, int counterOns, int conterTwo, List<String> counters, System.Data.DataTable excelTable, Worksheet wSheet)
-        //{
+        /// <summary>
+        /// 向datata中增加行
+        /// </summary>
+        /// <param name="dt">datatable</param>
+        /// <param name="excelModels">ExcelModels对象</param>
+        /// <param name="counter">counter参数，用于确定增加第几行</param>
+        private static void addDataRow(System.Data.DataTable dt, ExcelModels excelModels, int counter)
+        {
+            //定义一个dataTable的行
+            DataRow dr = dt.NewRow();
+            //为dataTable增加一行
+            dt.Rows.Add(dr);
 
-        //    //计数器1,定义起始位置
-        //    counterOns = 0;
-        //    //计数器2，定义结束位置
-        //    conterTwo = 1;
+            //给datatable的第counter行的6列赋值
+            dt.Rows[counter][0] = excelModels.Id;//序号
+            dt.Rows[counter][1] = excelModels.WorkflowId;//流程标识
+            dt.Rows[counter][2] = excelModels.WorkflowName;//流程名称
+            dt.Rows[counter][3] = excelModels.WorkflowStepId;//环节ID
+            dt.Rows[counter][4] = excelModels.WorkflowStepName;//环节名称
+            dt.Rows[counter][5] = excelModels.WorkflowStepPath;//可提交路径
+            dt.Rows[counter][6] = excelModels.WorkflowOPinion;//审批意见是否必填
+            dt.Rows[counter][7] = excelModels.WorkflowSwitches;//开关编码
 
-        //    //合并指定列的相同的单元格
+        }
 
-        //    for (int i = 0; i < Int32.Parse(counters[j]); i++)
-        //    {
-        //        //MessageBox.Show("第" + counterOns  + "行的值为：" + excelTable.Rows[counterOns][4].ToString());
-        //        //MessageBox.Show("第" + conterTwo  + "行的值为：" + excelTable.Rows[conterTwo][4].ToString());
 
-        //        //判断“环节名称”y以及“环节ID”是否相同
-        //        if (excelTable.Rows[counterOns][4].ToString().Equals(excelTable.Rows[conterTwo][4].ToString())
-        //            && excelTable.Rows[counterOns][3].ToString().Equals(excelTable.Rows[conterTwo][3].ToString()))
-        //        {
+        /// <summary>
+        /// 将可提交路径中的数字替换为文字说明
+        /// </summary>
+        /// <param name="start">流程的起始位置</param>
+        /// <param name="end">流程的结束位置</param>
+        /// <param name="path">可提交路径</param>
+        /// <param name="dt">DataTable</param>
+        /// <returns>返回一个String的值</returns>
+        private static String updatePath(int start, int end, String path, DataGridView dataGridView)
+        {
+            
+            //循环获取所有的可提交路径
+            for (int i = 0; i < end-start; i++)
+            {
+                //用于拆分可提交路径
+                String[] lujingshuzu = new String[] { };
 
-        //            //Microsoft.Office.Interop.Excel.Application application = new Microsoft.Office.Interop.Excel.Application();
-        //            //application.DisplayAlerts = false;
-        //            //环节ID列单合并元格，
-        //            wSheet.Cells.get_Range(wSheet.Cells[counterOns + 2, 4], wSheet.Cells[conterTwo + 2, 4]).Merge();
-        //            //环节名称列合并单元格，
-        //            wSheet.Cells.get_Range(wSheet.Cells[counterOns + 2, 5], wSheet.Cells[conterTwo + 2, 5]).Merge();
+                //将左半边大括号替换为 右半边的大括号，以便进行数据拆分
+                path = path.Replace("{", "}");
 
-        //            conterTwo = conterTwo + 1;
-        //        }
-        //        else
-        //        {
-        //            counterOns = conterTwo;
-        //            conterTwo = conterTwo + 1;
-        //        }
+                //string[] s = str.Split(new char[] { '#' });参考代码
+                //将路径根据右版本的大括号拆分成一个数据，用于数据比对
+                lujingshuzu = path.Split(new char[] { '}' });
 
-        //    }
+                //因为会出现重复数据，不知道怎么处理的关系，所以在此将lujing的值 置空
+                path = null;
 
-        //    //流程ID列合并单元格，
-        //    wSheet.Cells.get_Range(wSheet.Cells[2, 2], wSheet.Cells[Int32.Parse(counters[j]) + 1, 2]).Merge();
-        //    //流程名称列合并单元格，
-        //    wSheet.Cells.get_Range(wSheet.Cells[2, 3], wSheet.Cells[Int32.Parse(counters[j]) + 1, 3]).Merge();
+                //以下代码的作用为将可提交路径内的00几替换为文字
+                //根据数组的长度循环
+                for (int k = 0; k < lujingshuzu.Length; k++)
+                {
+                    //根据导入excel的行数循环
+                    for (int j = 0; j < end - start+1; j++)
+                    {
+                        //循环判断数组内的00几和可提交路径列的00及是否匹配，如果匹配则替换为文字说明
+                        if (lujingshuzu[k].Equals(dataGridView.Rows[start + j].Cells[3].Value.ToString()))
+                        {
+                            lujingshuzu[k] = dataGridView.Rows[start + j].Cells[4].Value.ToString();
+                        }
 
-        //}
-        #endregion
+                    }
+
+                    path = path + lujingshuzu[k];
+                }
+            }
+            return path;
+        }
 
     }
 }

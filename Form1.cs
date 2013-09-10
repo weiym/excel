@@ -20,6 +20,9 @@ namespace Excel
         {
             InitializeComponent();
         }
+        //标识是否数据转换过。0表示没转换，1表示转换过
+        int zhuanhuan ;
+        String Openlujing;
 
 
         /// <summary>
@@ -29,19 +32,20 @@ namespace Excel
         /// <param name="e"></param>
         private void btnInput_Click(object sender, EventArgs e)
         {
+            zhuanhuan = 0;
 
             //string lujing = "F:\\vs2010\\Excel\\测试.xls";
-            string lujing = ExcelHelp.OpenFileDialog(openFileDialog);
+            Openlujing = ExcelHelp.OpenFileDialog(openFileDialog);
 
             //判断路径是否为空
-            if(lujing==null||lujing.Equals(null))
+            if (Openlujing == null || Openlujing.Equals(null))
             {
                 MessageBox.Show("没有选择Excel文件！无法进行数据导入");
             }
             else
             {
                 //设置路径的位置
-                lblOpen.Text = lblOpen.Text.ToString() + lujing;
+                lblOpen.Text = lblOpen.Text.ToString() + Openlujing;
                 //更新状态
                 lblState.Text = "状态：数据导入中，请稍后";
                 dataGridView.DataSource = null;
@@ -50,7 +54,7 @@ namespace Excel
                 //为dataGridView指定数据源"SQL Results$"
 
 
-                dataGridView.DataSource = ExcelHelp.LoadDataFromExcel(lujing).Tables[0];
+                dataGridView.DataSource = ExcelHelp.LoadDataFromExcel(Openlujing).Tables[0];
             
                 //设置dataGridView为不可排序模式
                 ExcelHelp.ForbidSortColumn(dataGridView);
@@ -73,6 +77,11 @@ namespace Excel
         /// <param name="e"></param>
         private void btnExport_Click(object sender, EventArgs e)
         {
+            if(zhuanhuan==1)
+            {
+                dataGridView.DataSource = ExcelHelp.LoadDataFromExcel(Openlujing).Tables[0];
+            }
+
             if (ExcelHelp.updateExcel(dataGridView) != null)
             {
                 //更新状态为数据转换中
@@ -106,24 +115,28 @@ namespace Excel
 
         private void btncs_Click(object sender, EventArgs e)
         {
-            //ExcelHelp.cs();
-            //dataGridView.Rows[0].Cells[2].Value = "测试1";
-            //dataGridView.Rows[1].Cells[2].Value = "测试2";
-            //dataGridView.Rows[2].Cells[2].Value = "测试3";
-            //dataGridView.Rows[3].Cells[2].Value = "测试4";
-
-            if (ExcelHelp.updateExcel(dataGridView)!=null)
+            if (zhuanhuan == 0)
             {
-                lblState.Text = "状态：数据转换中";
-                //数据转换
-                dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
-                //更新状态
-                lblState.Text = "状态：数据转换完成";
+                zhuanhuan = 1;
+
+                if (ExcelHelp.updateExcel(dataGridView) != null)
+                {
+                    lblState.Text = "状态：数据转换中";
+                    //数据转换
+                    dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
+                    //更新状态
+                    lblState.Text = "状态：数据转换完成";
+                }
+                else
+                {
+                    MessageBox.Show("转换失败");
+                }
             }
             else
             {
-                MessageBox.Show("转换失败");
+                MessageBox.Show("数据以转换过，无法再次转换");
             }
+            
         }
 
 
