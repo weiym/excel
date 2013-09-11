@@ -62,7 +62,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cscs.cs" />
     <Compile Include="ExcelModels.cs" />
     <Compile Include="GuanYu.cs">
       <SubType>Form</SubType>
