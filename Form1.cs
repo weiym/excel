@@ -100,7 +100,7 @@ namespace Excel
                 lblSave.Text = lblSave.Text.ToString() + lujing;
                 //更新状态
                 lblState.Text = "状态：导出中，数据量较大，请稍后";
-                MessageBox.Show("因数据量较大，所以导出时间可能较长，请耐心等待");
+                MessageBox.Show("因数据量较大，所以导出时间可能较长，请耐心等待\r\n\r\n点击【确定】按钮后数据开始导出");
                 ExcelHelp.SaveDataTableToExcel((System.Data.DataTable)this.dataGridView.DataSource, lujing);
                 //更新状态
                 lblState.Text = "状态：数据导出完成";
@@ -163,24 +163,59 @@ namespace Excel
         }
 
 
-        private void tsmiGuanyu_Click(object sender, EventArgs e)
-        {
-            GuanYu guanyu = new GuanYu();
-            guanyu.ShowDialog();
-        }
-
-        private void tmsiHelp_Click(object sender, EventArgs e)
-        {
-            FromHelp help = new FromHelp();
-            help.ShowDialog();
-        }
-
+        /// <summary>
+        /// 说明菜单的单击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tsmiexplain_Click(object sender, EventArgs e)
         {
             MessageBox.Show("使用前请先查看帮助");
         }
 
 
+
+        /// <summary>
+        /// 关于的单击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsmiGuanyu_Click(object sender, EventArgs e)
+        {
+            GuanYu guanyu = new GuanYu();
+            guanyu.ShowDialog();
+        }
+
+
+        /// <summary>
+        /// 操作说明的单击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsmiOperationExplain_Click_1(object sender, EventArgs e)
+        {
+            OperationExplain operationExplain = new OperationExplain();
+            operationExplain.ShowDialog();
+        }
+
+
+        /// <summary>
+        /// 更新说明的单击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsmiUpdateExplain_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("新增功能：\r\n"
+                + "1、增加了对进一步处理的支持\r\n"
+                + "2、增加了对审批意见是否必填的支持\r\n"
+                + "\r\n"
+                + "更新功能：\r\n"
+                + "1、更新了可提交路径的替换逻辑\r\n"
+                + "2、修正了部分BUG\r\n"
+                + "3、更改了菜单栏的排序和说明\r\n"
+                );
+        }
 
     }
 }

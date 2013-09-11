@@ -15,5 +15,10 @@ namespace Excel
         {
             InitializeComponent();
         }
+
+        private void GuanYu_Load(object sender, EventArgs e)
+        {
+            lblVersion.Text = "版本信息：2013.9.11测试版";
+        }
     }
 }

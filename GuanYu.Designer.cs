@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GuanYu));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblVersion = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -58,15 +58,15 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "版权所有，请勿盗版。";
             // 
-            // label1
+            // lblVersion
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(27, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 12);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "版本信息：1.0测试版";
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblVersion.Location = new System.Drawing.Point(27, 28);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(70, 12);
+            this.lblVersion.TabIndex = 8;
+            this.lblVersion.Text = "版本信息：";
             // 
             // label3
             // 
@@ -97,7 +97,7 @@
             this.ClientSize = new System.Drawing.Size(438, 191);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -106,6 +106,7 @@
             this.MinimizeBox = false;
             this.Name = "GuanYu";
             this.Text = "关于";
+            this.Load += new System.EventHandler(this.GuanYu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -116,7 +117,7 @@
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
     }

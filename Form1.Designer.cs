@@ -38,6 +38,8 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tsmiexplain = new System.Windows.Forms.ToolStripMenuItem();
             this.tmsiHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiUpdateExplain = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiOperationExplain = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiGuanyu = new System.Windows.Forms.ToolStripMenuItem();
             this.lblOpen = new System.Windows.Forms.Label();
             this.lblSave = new System.Windows.Forms.Label();
@@ -119,10 +121,26 @@
             // 
             // tmsiHelp
             // 
+            this.tmsiHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiUpdateExplain,
+            this.tsmiOperationExplain});
             this.tmsiHelp.Name = "tmsiHelp";
             this.tmsiHelp.Size = new System.Drawing.Size(41, 20);
             this.tmsiHelp.Text = "帮助";
-            this.tmsiHelp.Click += new System.EventHandler(this.tmsiHelp_Click);
+            // 
+            // tsmiUpdateExplain
+            // 
+            this.tsmiUpdateExplain.Name = "tsmiUpdateExplain";
+            this.tsmiUpdateExplain.Size = new System.Drawing.Size(152, 22);
+            this.tsmiUpdateExplain.Text = "软件更新说明";
+            this.tsmiUpdateExplain.Click += new System.EventHandler(this.tsmiUpdateExplain_Click);
+            // 
+            // tsmiOperationExplain
+            // 
+            this.tsmiOperationExplain.Name = "tsmiOperationExplain";
+            this.tsmiOperationExplain.Size = new System.Drawing.Size(152, 22);
+            this.tsmiOperationExplain.Text = "操作说明";
+            this.tsmiOperationExplain.Click += new System.EventHandler(this.tsmiOperationExplain_Click_1);
             // 
             // tsmiGuanyu
             // 
@@ -213,6 +231,8 @@
         private System.Windows.Forms.Label lblState;
         private System.Windows.Forms.Label lblexplain;
         private System.Windows.Forms.ToolStripMenuItem tsmiGuanyu;
+        private System.Windows.Forms.ToolStripMenuItem tsmiUpdateExplain;
+        private System.Windows.Forms.ToolStripMenuItem tsmiOperationExplain;
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿namespace Excel
 {
-    partial class FromHelp
+    partial class OperationExplain
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FromHelp));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OperationExplain));
             this.textBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -36,16 +36,17 @@
             // 
             this.textBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox.Font = new System.Drawing.Font("宋体", 9F);
-            this.textBox.ForeColor = System.Drawing.Color.Red;
+            this.textBox.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.textBox.Location = new System.Drawing.Point(12, 12);
             this.textBox.Multiline = true;
             this.textBox.Name = "textBox";
             this.textBox.ReadOnly = true;
+            this.textBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox.Size = new System.Drawing.Size(414, 167);
             this.textBox.TabIndex = 7;
             // 
-            // FromHelp
+            // OperationExplain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -56,7 +57,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FromHelp";
+            this.Name = "OperationExplain";
             this.Text = "帮助";
             this.Load += new System.EventHandler(this.Help_Load);
             this.ResumeLayout(false);
