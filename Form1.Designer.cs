@@ -67,6 +67,7 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView.BackgroundColor = System.Drawing.SystemColors.ActiveBorder;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Location = new System.Drawing.Point(0, 122);
             this.dataGridView.Name = "dataGridView";
@@ -74,6 +75,7 @@
             this.dataGridView.RowTemplate.Height = 23;
             this.dataGridView.Size = new System.Drawing.Size(700, 482);
             this.dataGridView.TabIndex = 1;
+            this.dataGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView_CellPainting_1);
             // 
             // btnExport
             // 
@@ -131,14 +133,14 @@
             // tsmiUpdateExplain
             // 
             this.tsmiUpdateExplain.Name = "tsmiUpdateExplain";
-            this.tsmiUpdateExplain.Size = new System.Drawing.Size(152, 22);
+            this.tsmiUpdateExplain.Size = new System.Drawing.Size(142, 22);
             this.tsmiUpdateExplain.Text = "软件更新说明";
             this.tsmiUpdateExplain.Click += new System.EventHandler(this.tsmiUpdateExplain_Click);
             // 
             // tsmiOperationExplain
             // 
             this.tsmiOperationExplain.Name = "tsmiOperationExplain";
-            this.tsmiOperationExplain.Size = new System.Drawing.Size(152, 22);
+            this.tsmiOperationExplain.Size = new System.Drawing.Size(142, 22);
             this.tsmiOperationExplain.Text = "操作说明";
             this.tsmiOperationExplain.Click += new System.EventHandler(this.tsmiOperationExplain_Click_1);
             // 

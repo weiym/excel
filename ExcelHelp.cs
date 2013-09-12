@@ -1256,10 +1256,10 @@ namespace Excel
 
 
         /// <summary>
-        /// 判断有多少个流程,将每个流程起始位置的下标存入数组
+        /// 判断有多少个流程,将每个流程起始位置的下标存入List
         /// </summary>
         /// <param name="excelTable">输入参数为DataGridView</param>
-        /// <returns>返回一个List<String></returns>
+        /// <returns>返回一个List</returns>
         private static List<String> cordysNumber(DataGridView dataGridView)
         {
             if (dataGridView.Rows.Count > 0)
@@ -1498,6 +1498,49 @@ namespace Excel
                 }
             }
             return path;
+        }
+
+        /// <summary>
+        /// 根据流程的奇数和偶数给予不同的颜色
+        /// </summary>
+        /// <param name="dataGridView">dataGridView</param>
+        public static void updateDataGridViewColor(DataGridView dataGridView)
+        {
+            List<String> list = new List<String>();
+            //获取每个流程结束的位置
+            list=cordysNumber(dataGridView);
+
+            for(int i=0;i<list.Count;i++)
+            {
+                //判断是偶数流程还是奇数流程
+                if(i%2==0)//偶数行
+                {
+                    //判断是否为第一个流程，第一个流程的循环逻辑不一样
+                    if (i == 0)//如果是第一个流程
+                    {
+                        for (int j = 0; j <= Int32.Parse(list[i]); j++)
+                        {
+                            dataGridView.Rows[j].DefaultCellStyle.BackColor = Color.Azure;
+                        }
+                    }
+                    else//如果不是第一个流程
+                    {
+                        for (int j = 0; j < Int32.Parse(list[i]) - Int32.Parse(list[i - 1]); j++)
+                        {
+                            dataGridView.Rows[Int32.Parse(list[i - 1]) + j + 1].DefaultCellStyle.BackColor = Color.Azure;
+                        }
+                    }
+                    
+                }
+                else//奇数行
+                {
+                    for (int j = 0; j < Int32.Parse(list[i]) - Int32.Parse(list[i - 1]); j++)
+                    {
+                        dataGridView.Rows[Int32.Parse(list[i - 1]) + j + 1].DefaultCellStyle.BackColor = Color.PeachPuff;
+                    }
+
+                }
+            }
         }
 
     }

@@ -77,6 +77,8 @@ namespace Excel
         /// <param name="e"></param>
         private void btnExport_Click(object sender, EventArgs e)
         {
+
+            //此处需要判断数据是否转换过，如果转换过需要重新加载数据，否则直接转换数据会有问题。
             if(zhuanhuan==1)
             {
                 dataGridView.DataSource = null;
@@ -87,6 +89,8 @@ namespace Excel
             lblState.Text = "状态：数据转换中";
             //数据转换
             dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
+            //更新dataGridView的颜色
+            ExcelHelp.updateDataGridViewColor(dataGridView);
 
             if (dataGridView.DataSource != null)
             {
@@ -128,6 +132,8 @@ namespace Excel
 
                 if (dataGridView.DataSource != null)
                 {
+                    //更新dataGridView的颜色
+                    ExcelHelp.updateDataGridViewColor(dataGridView);
                     //更新状态
                     lblState.Text = "状态：数据转换完成";
                     MessageBox.Show("数据转换完成");
@@ -141,7 +147,12 @@ namespace Excel
             {
                 MessageBox.Show("数据以转换过，无法再次转换");
             }
-            
+
+
+            //MessageBox.Show("居中设置");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridView.DefaultCellStyle = dataGridViewCellStyle1; 
         }
 
 
@@ -216,6 +227,68 @@ namespace Excel
                 + "3、更改了菜单栏的排序和说明\r\n"
                 );
         }
+
+
+
+   
+        /// <summary>
+        /// 网上拷贝的代码，不懂什么意思，用于单元格合并
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridView_CellPainting_1(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            
+            ////MessageBox.Show("重绘单元格");
+            //// 对第1列相同单元格进行合并
+            //if (e.ColumnIndex == 0 && e.RowIndex != -1)
+            //{
+            //    using(Brush gridBrush = new SolidBrush(this.dataGridView.GridColor),backColorBrush = new SolidBrush(e.CellStyle.BackColor))
+            //    {
+            //        using (Pen gridLinePen = new Pen(gridBrush))
+            //        {
+            //            // 清除单元格
+            //            e.Graphics.FillRectangle(backColorBrush, e.CellBounds);
+
+            //            // 画 Grid 边线（仅画单元格的底边线和右边线）
+            //            // 如果下一行和当前行的数据不同，则在当前的单元格画一条底边线
+            //            if (e.RowIndex < dataGridView.Rows.Count - 1 &&
+            //            dataGridView.Rows[e.RowIndex + 1].Cells[e.ColumnIndex].Value.ToString() !=
+            //            e.Value.ToString())
+
+            //                e.Graphics.DrawLine(gridLinePen, e.CellBounds.Left,
+            //                e.CellBounds.Bottom - 1, e.CellBounds.Right - 1,
+            //                e.CellBounds.Bottom - 1);
+            //                // 画右边线
+            //                e.Graphics.DrawLine(gridLinePen, e.CellBounds.Right - 1,
+            //                e.CellBounds.Top, e.CellBounds.Right - 1,
+            //                e.CellBounds.Bottom);
+
+            //            // 画（填写）单元格内容，相同的内容的单元格只填写第一个
+            //            if (e.Value != null)
+            //            {
+            //                //当前行的数据大于0，并且上一行的数据和当前行的数据相同
+            //                if (e.RowIndex > 0 &&
+            //                dataGridView.Rows[e.RowIndex - 1].Cells[e.ColumnIndex].Value.ToString() ==
+            //                e.Value.ToString())
+            //                { }
+            //                else
+            //                {
+            //                    e.Graphics.DrawString((String)e.Value, e.CellStyle.Font,
+            //                        Brushes.Black, e.CellBounds.X + 2,
+            //                        e.CellBounds.Y + 5, StringFormat.GenericDefault);
+            //                }
+            //            }
+            //            e.Handled = true;
+            //        }
+            //    }
+
+                
+            //}
+        }
+
+
+
 
     }
 }
