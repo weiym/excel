@@ -89,6 +89,8 @@ namespace Excel
             lblState.Text = "状态：数据转换中";
             //数据转换
             dataGridView.DataSource = ExcelHelp.updateExcel(dataGridView);
+            //是否转换的标示改为1
+            zhuanhuan = 1;
             //更新dataGridView的颜色
             ExcelHelp.updateDataGridViewColor(dataGridView);
 
@@ -100,14 +102,25 @@ namespace Excel
                 lblState.Text = "状态：数据转换完成，待导出";
                 //获取导出路径
                 string lujing = ExcelHelp.SaveFileDialog(saveFileDialog);
-                //展示导出路径
-                lblSave.Text = lblSave.Text.ToString() + lujing;
-                //更新状态
-                lblState.Text = "状态：导出中，数据量较大，请稍后";
-                MessageBox.Show("因数据量较大，所以导出时间可能较长，请耐心等待\r\n\r\n点击【确定】按钮后数据开始导出");
-                ExcelHelp.SaveDataTableToExcel((System.Data.DataTable)this.dataGridView.DataSource, lujing);
-                //更新状态
-                lblState.Text = "状态：数据导出完成";
+
+                if (lujing == null)
+                {
+                    MessageBox.Show("您未选择文件保存的位置和名称，数据无法导出，请重试");
+
+                }
+                else
+                {
+                    //展示导出路径
+                    lblSave.Text = lblSave.Text.ToString() + lujing;
+                    //更新状态
+                    lblState.Text = "状态：导出中，数据量较大，请稍后";
+                    MessageBox.Show("因数据量较大，所以导出时间可能较长，请耐心等待\r\n\r\n点击【确定】按钮后数据开始导出");
+                    ExcelHelp.SaveDataTableToExcel((System.Data.DataTable)this.dataGridView.DataSource, lujing);
+                    //更新状态
+                    lblState.Text = "状态：数据导出完成";
+ 
+                }
+                
 
 
                 
@@ -150,9 +163,9 @@ namespace Excel
 
 
             //MessageBox.Show("居中设置");
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.dataGridView.DefaultCellStyle = dataGridViewCellStyle1; 
+            //System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            //dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            //this.dataGridView.DefaultCellStyle = dataGridViewCellStyle1; 
         }
 
 
@@ -220,6 +233,8 @@ namespace Excel
             MessageBox.Show("新增功能：\r\n"
                 + "1、增加了对进一步处理的支持\r\n"
                 + "2、增加了对审批意见是否必填的支持\r\n"
+                + "3、增加展示时每个流程一种颜色\r\n"
+                + "4、增加了展示时对相同的数据合并单元格\r\n"
                 + "\r\n"
                 + "更新功能：\r\n"
                 + "1、更新了可提交路径的替换逻辑\r\n"
@@ -238,53 +253,56 @@ namespace Excel
         /// <param name="e"></param>
         private void dataGridView_CellPainting_1(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            
-            ////MessageBox.Show("重绘单元格");
-            //// 对第1列相同单元格进行合并
-            //if (e.ColumnIndex == 0 && e.RowIndex != -1)
-            //{
-            //    using(Brush gridBrush = new SolidBrush(this.dataGridView.GridColor),backColorBrush = new SolidBrush(e.CellStyle.BackColor))
-            //    {
-            //        using (Pen gridLinePen = new Pen(gridBrush))
-            //        {
-            //            // 清除单元格
-            //            e.Graphics.FillRectangle(backColorBrush, e.CellBounds);
+            // 循环  i代表了要合并的列，此处固化为了只有5列，后续如果需要可以改成动态的
+            for (int i = 1; i < 5;i++ )
+            {
+                //MessageBox.Show("重绘单元格");
+                // 对第1列相同单元格进行合并
+                if (e.ColumnIndex == i && e.RowIndex != -1)
+                {
+                    using (Brush gridBrush = new SolidBrush(this.dataGridView.GridColor), backColorBrush = new SolidBrush(e.CellStyle.BackColor))
+                    {
+                        using (Pen gridLinePen = new Pen(gridBrush))
+                        {
+                            // 清除单元格
+                            e.Graphics.FillRectangle(backColorBrush, e.CellBounds);
 
-            //            // 画 Grid 边线（仅画单元格的底边线和右边线）
-            //            // 如果下一行和当前行的数据不同，则在当前的单元格画一条底边线
-            //            if (e.RowIndex < dataGridView.Rows.Count - 1 &&
-            //            dataGridView.Rows[e.RowIndex + 1].Cells[e.ColumnIndex].Value.ToString() !=
-            //            e.Value.ToString())
+                            // 画 Grid 边线（仅画单元格的底边线和右边线）
+                            // 如果下一行和当前行的数据不同，则在当前的单元格画一条底边线
+                            if (e.RowIndex < dataGridView.Rows.Count - 1 &&
+                            dataGridView.Rows[e.RowIndex + 1].Cells[e.ColumnIndex].Value.ToString() !=
+                            e.Value.ToString())
 
-            //                e.Graphics.DrawLine(gridLinePen, e.CellBounds.Left,
-            //                e.CellBounds.Bottom - 1, e.CellBounds.Right - 1,
-            //                e.CellBounds.Bottom - 1);
-            //                // 画右边线
-            //                e.Graphics.DrawLine(gridLinePen, e.CellBounds.Right - 1,
-            //                e.CellBounds.Top, e.CellBounds.Right - 1,
-            //                e.CellBounds.Bottom);
+                                e.Graphics.DrawLine(gridLinePen, e.CellBounds.Left,
+                                e.CellBounds.Bottom - 1, e.CellBounds.Right - 1,
+                                e.CellBounds.Bottom - 1);
+                            // 画右边线
+                            e.Graphics.DrawLine(gridLinePen, e.CellBounds.Right - 1,
+                            e.CellBounds.Top, e.CellBounds.Right - 1,
+                            e.CellBounds.Bottom);
 
-            //            // 画（填写）单元格内容，相同的内容的单元格只填写第一个
-            //            if (e.Value != null)
-            //            {
-            //                //当前行的数据大于0，并且上一行的数据和当前行的数据相同
-            //                if (e.RowIndex > 0 &&
-            //                dataGridView.Rows[e.RowIndex - 1].Cells[e.ColumnIndex].Value.ToString() ==
-            //                e.Value.ToString())
-            //                { }
-            //                else
-            //                {
-            //                    e.Graphics.DrawString((String)e.Value, e.CellStyle.Font,
-            //                        Brushes.Black, e.CellBounds.X + 2,
-            //                        e.CellBounds.Y + 5, StringFormat.GenericDefault);
-            //                }
-            //            }
-            //            e.Handled = true;
-            //        }
-            //    }
+                            // 画（填写）单元格内容，相同的内容的单元格只填写第一个
+                            if (e.Value != null)
+                            {
+                                //当前行的数据大于0，并且上一行的数据和当前行的数据相同
+                                if (e.RowIndex > 0 &&
+                                dataGridView.Rows[e.RowIndex - 1].Cells[e.ColumnIndex].Value.ToString() ==
+                                e.Value.ToString())
+                                { }
+                                else
+                                {
+                                    e.Graphics.DrawString((String)e.Value, e.CellStyle.Font,
+                                        Brushes.Black, e.CellBounds.X + 2,
+                                        e.CellBounds.Y + 5, StringFormat.GenericDefault);
+                                }
+                            }
+                            e.Handled = true;
+                        }
+                    }
+                }
+            }
 
-                
-            //}
+           
         }
 
 

@@ -1510,6 +1510,7 @@ namespace Excel
             //获取每个流程结束的位置
             list=cordysNumber(dataGridView);
 
+
             for(int i=0;i<list.Count;i++)
             {
                 //判断是偶数流程还是奇数流程

@@ -27,7 +27,10 @@ namespace Excel
                 + "from workflow_step ws where ws.workflow_id in ('流程的ID')"
                 + "order by ws.workflow_id,ws.step_id\r\n\r\n"
                 + "3、目前此工具仅支持offic2003和offic2007，暂不支持wps\r\n\r\n"
-                + "4、如果提示无法打开【Sheet.xlsx】，请在进程管理器中将所有的excel.exe强制结束";
+                + "4、如果提示不能访问“Sheet1.xlsx”，请在进程管理器中将所有的excel.exe强制结束";
+
+
+
 
 
             textBox.SelectionStart = 0;
