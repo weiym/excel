@@ -118,8 +118,10 @@ namespace Excel
                 //对进一步处理的数据进行处理
                 for (int a = 0; a < dataGridView.Rows.Count; a++)
                 {
-                    //判断进一步处理是否为空或者是否为0
-                    if (dataGridView.Rows[a].Cells[6].Value.ToString().Equals("") || dataGridView.Rows[a].Cells[6].Value.ToString() == null || dataGridView.Rows[a].Cells[6].Value.ToString().Equals("0"))
+                    //判断进一步处理(6)是否为空或者是否为“0”,判断可提交路径（5）是否为空。满足任何一项都不做处理
+                    if (dataGridView.Rows[a].Cells[6].Value.ToString().Equals("") || dataGridView.Rows[a].Cells[6].Value.ToString() == null 
+                        || dataGridView.Rows[a].Cells[6].Value.ToString().Equals("0") 
+                        || dataGridView.Rows[a].Cells[5].Value.ToString().Equals("") || dataGridView.Rows[a].Cells[5].Value.ToString() == null)
                     {
                         continue;
                     }
