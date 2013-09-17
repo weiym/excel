@@ -118,8 +118,8 @@ namespace Excel
                 //对进一步处理的数据进行处理
                 for (int a = 0; a < dataGridView.Rows.Count; a++)
                 {
-                    //判断进一步处理是否为空
-                    if (dataGridView.Rows[a].Cells[6].Value.ToString().Equals("") || dataGridView.Rows[a].Cells[6].Value.ToString() == null)
+                    //判断进一步处理是否为空或者是否为0
+                    if (dataGridView.Rows[a].Cells[6].Value.ToString().Equals("") || dataGridView.Rows[a].Cells[6].Value.ToString() == null || dataGridView.Rows[a].Cells[6].Value.ToString().Equals("0"))
                     {
                         continue;
                     }
@@ -895,11 +895,15 @@ namespace Excel
                             #endregion
                         }
 
+                        //此组合会导致大部分名字超长，excel仅支持31个字符
+                        ////重命名sheet页的名字流程名字+流程ID的组合
+                        //wSheet.Name = excelTable.Rows[Int32.Parse(counters[j])][2].ToString()
+                        //    + "("
+                        //    + excelTable.Rows[Int32.Parse(counters[j])][1].ToString()
+                        //    + ")";
+
                         //重命名sheet页的名字流程名字+流程ID的组合
-                        wSheet.Name = excelTable.Rows[Int32.Parse(counters[j])][2].ToString()
-                            + "(" 
-                            + excelTable.Rows[Int32.Parse(counters[j])][1].ToString()
-                            +")";
+                        wSheet.Name = excelTable.Rows[Int32.Parse(counters[j])][2].ToString();
                     }
                     else 
                     {
@@ -1058,11 +1062,15 @@ namespace Excel
                             #endregion
                         }
 
+                        //此组合会导致大部分名字超长，excel仅支持31个字符
+                        ////重命名sheet页的名字流程名字+流程ID的组合
+                        //wSheet.Name = excelTable.Rows[Int32.Parse(counters[j])][2].ToString()
+                        //    + "("
+                        //    + excelTable.Rows[Int32.Parse(counters[j])][1].ToString()
+                        //    + ")";
+
                         //重命名sheet页的名字流程名字+流程ID的组合
-                        wSheet.Name = excelTable.Rows[Int32.Parse(counters[j])][2].ToString()
-                            + "("
-                            + excelTable.Rows[Int32.Parse(counters[j])][1].ToString()
-                            + ")";
+                        wSheet.Name = excelTable.Rows[Int32.Parse(counters[j])][2].ToString();
                     }
                 }
 
